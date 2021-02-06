@@ -15,9 +15,17 @@ namespace DataAccess.Concrete.EntityFramework
         {
             using (ReCapProjectCarDbContext context = new ReCapProjectCarDbContext())
             {
-                var addedEntity = context.Entry(entity);
-                addedEntity.State = EntityState.Added;
-                context.SaveChanges();
+                if (entity.DailyPrice>0 && entity.Descriptions.Length>2)
+                {
+                    var addedEntity = context.Entry(entity);
+                    addedEntity.State = EntityState.Added;
+                    context.SaveChanges();
+                }
+                else
+                {
+                    Console.WriteLine("Car rental daily fee must be greater than 0.");
+                }
+
             }
         }
 
