@@ -17,32 +17,33 @@ namespace ConsoleUI
         private static void ColorTest()
         {
             ColorManager colorManager = new ColorManager(new EfColorDal());
-            foreach (var color in colorManager.GetAll())
+            var result = colorManager.GetAll();
+            foreach (var color in result.Data)
             {
                 Console.WriteLine(color.ColorName);
             }
-            colorManager.Add();
-            colorManager.Delete();
-            colorManager.Update();
+
         }
 
         private static void BrandTest()
         {
             BrandManager brandManager = new BrandManager(new EfBrandDal());
-            foreach (var brand in brandManager.GetAll())
+            var result = brandManager.GetAll();
+            foreach (var brand in result.Data)
             {
                 Console.WriteLine(brand.BrandName);
             }
-            brandManager.Add();
-            brandManager.Delete();
-            brandManager.Update();
+
         }
 
         private static void CarDetailsTest()
         {
             CarManager carManager = new CarManager(new EfCarDal());
 
-            foreach (var car in carManager.GetCarDetails())
+            var result = carManager.GetCarDetails();
+            ;
+
+            foreach (var car in result.Data)
             {
                 Console.WriteLine(car.Descriptions + "/ " + car.BrandName + "/" + car.ColorName + " /" + car.DailyPrice);
             }

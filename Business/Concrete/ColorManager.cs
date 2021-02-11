@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -16,29 +18,55 @@ namespace Business.Concrete
             _colorDal = colorDal;
         }
 
-        public void Add()
+        public IResult Add(Color color)
         {
-            throw new NotImplementedException();
+            if (color.ColorName.Length<3)
+            {
+                return new ErrorResult(Messages.Error);
+            }
+
+            _colorDal.Add(color);
+            return new SuccessResult(Messages.Successed);
         }
 
-        public void Delete()
+        public IResult Delete(int colorId)
         {
-            throw new NotImplementedException();
+            foreach (var ncolor in _colorDal.GetAll())
+            {
+                if (ncolor.ColorId == colorId)
+                {
+                    _colorDal.Delete(ncolor);
+                    return new SuccessResult(Messages.Successed);
+                }
+
+            }
+            return new ErrorResult(Messages.Error);
         }
 
-        public List<Color> GetAll()
+        public IDataResult<List<Color>> GetAll()
         {
-            return _colorDal.GetAll();
+            return new SuccessDataResult<List<Color>> (_colorDal.GetAll());
         }
 
-        public Color GetByColorId(int colorId)
+        public IDataResult<Color> GetByColorId(int colorId)
         {
-            return _colorDal.Get(c=>c.ColorId==colorId);
+            return new SuccessDataResult<Color> (_colorDal.Get(c=>c.ColorId==colorId));
         }
 
-        public void Update()
+        public IResult Update(int colorId,Color color)
         {
-            throw new NotImplementedException();
+            foreach (var ncolor in _colorDal.GetAll())
+            {
+                if (ncolor.ColorId == colorId)
+                {
+                    ncolor.ColorId = color.ColorId;
+                    ncolor.ColorName = color.ColorName;
+                    _colorDal.Update(color);
+                    return new SuccessResult(Messages.Successed);
+                }
+            }
+
+            return new ErrorResult(Messages.Error);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -16,29 +18,55 @@ namespace Business.Concrete
             _brandDal = brandDal;
         }
 
-        public void Add()
+        public IResult Add(Brand brand)
         {
-            Console.WriteLine("Adding a car brand.");
+            if (brand.BrandName.Length<3)
+            {
+                return new ErrorResult(Messages.Error);
+            }
+
+            _brandDal.Add(brand);
+            return new SuccessResult(Messages.Successed);
         }
 
-        public void Delete()
+        public IResult Delete(int brandId)
         {
-            Console.WriteLine("Deleteing a car brand.");
+            foreach (var nbrand in _brandDal.GetAll())
+            {
+                if (nbrand.BrandId==brandId)
+                {
+                    _brandDal.Delete(nbrand);
+                    return new SuccessResult(Messages.Successed);
+                }
+
+            }
+            return new ErrorResult(Messages.Error);
         }
 
-        public List<Brand> GetAll()
+        public IDataResult<List<Brand>> GetAll()
         {
-            return _brandDal.GetAll();
+            return new SuccessDataResult<List<Brand>>( _brandDal.GetAll(),Messages.Successed);
         }
 
-        public Brand GetByBrandId(int brandId)
+        public IDataResult<Brand> GetByBrandId(int brandId)
         {
-            return _brandDal.Get(b=>b.BrandId == brandId);
+            return new SuccessDataResult<Brand> (_brandDal.Get(b=>b.BrandId == brandId),Messages.Successed);
         }
 
-        public void Update()
+        public IResult Update(int brandId,Brand brand)
         {
-            Console.WriteLine("Updateding a car brand");
+            foreach (var nbrand in _brandDal.GetAll())
+            {
+                if (nbrand.BrandId==brandId)
+                {
+                    nbrand.BrandId = brand.BrandId;
+                    nbrand.BrandName = brand.BrandName;
+                    _brandDal.Update(brand);
+                    return new SuccessResult(Messages.Successed);
+                }
+            }
+
+            return new ErrorResult(Messages.Error);
         }
     }
 }
