@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.Utities.Business;
 using Core.Utities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -16,22 +19,27 @@ namespace Business.Concrete
         {
             _userDal = userDal;
         }
-        public IResult Add(User t)
+
+        [ValidationAspect(typeof(UserValidator))]
+        public IResult Add(User user)
         {
-            if (t.FirstName.Length>3 && t.LastName.Length >2 && t.Email.Length != 0 && t.Password.Length >= 8)
+            var result = BusinessRules.Run(ChechkIfEmailExsist(user.Email));
+
+            if (result != null)
             {
-                _userDal.Add(t);
-                return new SuccessResult(Messages.Successed);
+                return result;
             }
 
-            return new ErrorResult(Messages.Error);
+             _userDal.Add(user);
+            return new SuccessResult(Messages.Successed);
+
         }
 
-        public IResult Delete(int id)
+        public IResult Delete(int userId)
         {
             foreach (var user in _userDal.GetAll())
             {
-                if (user.UserId == id)
+                if (user.UserId == userId)
                 {
                     _userDal.Delete(user);
                     return new SuccessResult(Messages.Successed);
@@ -46,26 +54,39 @@ namespace Business.Concrete
             return new SuccessDataResult<List<User>>(_userDal.GetAll(),Messages.Successed);
         }
 
-        public IDataResult<User> GetById(int id)
+        public IDataResult<User> GetById(int userId)
         {
-            return new SuccessDataResult<User>(_userDal.Get(p=>p.UserId == id), Messages.Successed);
+            return new SuccessDataResult<User>(_userDal.Get(p=>p.UserId == userId), Messages.Successed);
         }
 
-        public IResult Update(int id, User t)
+        [ValidationAspect(typeof(UserValidator))]
+        public IResult Update(int userId, User user)
         {
-            foreach (var user in _userDal.GetAll())
+            foreach (var nuser in _userDal.GetAll())
             {
-                if (user.UserId == id)
+                if (nuser.UserId == userId)
                 {
-                    user.FirstName = t.FirstName;
-                    user.LastName = t.LastName;
-                    user.Email = t.Email;
-                    user.Password = t.Password;
+                    nuser.FirstName = user.FirstName;
+                    nuser.LastName = user.LastName;
+                    nuser.Email = user.Email;
+                    nuser.Password = user.Password;
 
                     return new SuccessResult(Messages.Successed);
                 }
             }
             return new ErrorResult(Messages.Error);
         }
+
+        private IResult ChechkIfEmailExsist(string email)
+        {
+            var result = _userDal.GetAll(u=>u.Email == email).Count;
+            if (result != 0)
+            {
+                return new ErrorResult(Messages.Error);
+            }
+
+            return new SuccessResult(Messages.Successed);
+        }
+
     }
 }

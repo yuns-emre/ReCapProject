@@ -10,7 +10,8 @@ namespace Business.Constants
         public static string CarNameInvalid = "Ürün ismi geçersiz";
         public static string CarListed = "Arabalar listelendi";
         public static string MaintenanceTime = "Sistem bakımda";
-        internal static string Error="İşleminiz başarısız olmuştur.";
-        internal static string Successed="İşleminiz başarı ile gerçekleştirilmiştir.";
+        public static string Error="İşleminiz başarısız olmuştur.";
+        public static string Successed="İşleminiz başarı ile gerçekleştirilmiştir.";
+        public static string CarImageLimitExceeded = "En fazla 5 adet resim koyabilirsiniz.";
     }
 }

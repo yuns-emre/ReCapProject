@@ -2,12 +2,14 @@
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Utities.Business;
 using Core.Utities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -23,9 +25,16 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
+
         [ValidationAspect(typeof(CarValidator))]
         public IResult Add(Car car)
         {
+            IResult result = BusinessRules.Run(CheckIfCarNameExists(car.CarModelName,car.Description));
+
+            if (result != null)
+            {
+                return result;
+            }
             _carDal.Add(car);
             
             return new SuccessResult(Messages.CarAdded);
@@ -81,7 +90,7 @@ namespace Business.Concrete
                     ncar.BrandId = car.BrandId;
                     ncar.ColorId = car.ColorId;
                     ncar.DailyPrice = car.DailyPrice;
-                    ncar.Descriptions = car.Descriptions;
+                    ncar.Description = car.Description;
                     ncar.ModelYear = car.ModelYear;
 
                     return new SuccessResult(Messages.Successed);
@@ -89,6 +98,17 @@ namespace Business.Concrete
             }
 
             return new ErrorResult(Messages.Error);
+        }
+
+        private IResult CheckIfCarNameExists(string carName,string carDescription)
+        {
+            var result = _carDal.GetAll(p=>p.CarModelName == carName && p.Description == carDescription).Any();
+            if (result)
+            {
+                return new ErrorResult(Messages.Error);
+            }
+
+            return new SuccessResult(Messages.Successed);
         }
     }
 }
