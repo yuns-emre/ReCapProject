@@ -2,8 +2,9 @@
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
-using Core.Utities.Business;
-using Core.Utities.Results;
+using Core.Entities.Concrete;
+using Core.Utilities.Business;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -59,6 +60,16 @@ namespace Business.Concrete
             return new SuccessDataResult<User>(_userDal.Get(p=>p.UserId == userId), Messages.Successed);
         }
 
+        public User GetByMail(string email)
+        {
+            return _userDal.Get(u=>u.Email == email);
+        }
+
+        public List<OperationClaim> GetClaims(User user)
+        {
+            return _userDal.GetClaims(user);
+        }
+
         [ValidationAspect(typeof(UserValidator))]
         public IResult Update(int userId, User user)
         {
@@ -69,7 +80,7 @@ namespace Business.Concrete
                     nuser.FirstName = user.FirstName;
                     nuser.LastName = user.LastName;
                     nuser.Email = user.Email;
-                    nuser.Password = user.Password;
+                    
 
                     return new SuccessResult(Messages.Successed);
                 }

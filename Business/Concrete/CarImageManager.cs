@@ -2,9 +2,9 @@
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
-using Core.Utities.Business;
-using Core.Utities.Helpers;
-using Core.Utities.Results;
+using Core.Utilities.Business;
+using Core.Utilities.Helpers;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
