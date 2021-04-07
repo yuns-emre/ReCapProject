@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getimagescarbyid")]
+        [HttpGet("getbyid")]
         public IActionResult GetById([FromForm(Name = ("ImageId"))] int id)
         {
             var result = _carImageService.Get(id);
@@ -39,6 +39,20 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getfilebyid")]
+        public IActionResult GetFileById(int id)
+        {
+            var result = _carImageService.GetById(id);
+
+            if (result.Success)
+            {
+                var b = System.IO.File.ReadAllBytes(result.Data.ImagePath);
+                return File(b, "image/jpeg");
+            }
+
             return BadRequest(result);
         }
 

@@ -33,11 +33,24 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getbyid")]
+        [HttpGet("getbyrentalid")]
 
-        public IActionResult Get(int id)
+        public IActionResult Get(int rentalId)
         {
-            var result = _rentalService.GetById(id);
+            var result = _rentalService.GetById(rentalId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpGet("getrentaldetail")]
+
+        public IActionResult GetRentalDetails()
+        {
+            var result = _rentalService.GetRentalDetails();
             if (result.Success)
             {
                 return Ok(result);
@@ -74,9 +87,9 @@ namespace WebAPI.Controllers
 
         [HttpPost("update")]
 
-        public IActionResult Update(int id, Rental rental)
+        public IActionResult Update(int rentalId, Rental rental)
         {
-            var result = _rentalService.Update(id, rental);
+            var result = _rentalService.Update(rentalId, rental);
             if (result.Success)
             {
                 return Ok(result);

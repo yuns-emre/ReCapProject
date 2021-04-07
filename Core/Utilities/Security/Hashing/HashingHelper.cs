@@ -27,9 +27,8 @@ namespace Core.Utilities.Security.Hashing
                         return false;
                     }
                 }
+                return true;
             }
-
-            return true;
         }
     }
 }

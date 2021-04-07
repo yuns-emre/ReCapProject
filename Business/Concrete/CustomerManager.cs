@@ -3,6 +3,7 @@ using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,19 +17,19 @@ namespace Business.Concrete
         {
             _customerDal = customerDal;
         }
-        public IResult Add(Customer t)
+        public IResult Add(Customer customer)
         {
-            _customerDal.Add(t);
+            _customerDal.Add(customer);
             return new SuccessResult(Messages.Successed);
         }
 
-        public IResult Delete(int id)
+        public IResult Delete(int customerId)
         {
-            foreach (var customerId in _customerDal.GetAll())
+            foreach (var customer in _customerDal.GetAll())
             {
-                if (customerId.UserId == id)
+                if (customer.CustomerId == customerId)
                 {
-                    _customerDal.Delete(customerId);
+                    _customerDal.Delete(customer);
                     return new SuccessResult(Messages.Successed);
                 }
             }
@@ -41,19 +42,24 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Customer>>(_customerDal.GetAll(), Messages.Successed);
         }
 
-        public IDataResult<Customer> GetById(int id)
+        public IDataResult<Customer> GetByCustomerId(int id)
         {
-            return new SuccessDataResult<Customer>(_customerDal.Get(p=>p.UserId == id), Messages.Successed);
+            return new SuccessDataResult<Customer>(_customerDal.Get(p=>p.CustomerId == id), Messages.Successed);
         }
 
-        public IResult Update(int id, Customer t)
+        public IDataResult<List<CustomerDetailDto>> GetCustomerDetails()
         {
-            foreach (var customer in _customerDal.GetAll())
+            return new SuccessDataResult<List<CustomerDetailDto>>(_customerDal.GetCustomerDetails());
+        }
+
+        public IResult Update(int customerId, Customer customer)
+        {
+            foreach (var ncustomer in _customerDal.GetAll())
             {
-                if (customer.UserId== id)
+                if (ncustomer.CustomerId== customerId)
                 {
-                    customer.UserId = t.UserId;
-                    customer.CompanyName = t.CompanyName;
+                    ncustomer.UserId = customer.UserId;
+                    ncustomer.CompanyName = customer.CompanyName;
                     return new SuccessResult(Messages.Successed);
                 }
             }

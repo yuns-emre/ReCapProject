@@ -10,7 +10,7 @@ namespace Core.Utilities.Helpers
     {
         public static string Add(IFormFile file)
         {
-
+            var result = newPath(file);
             var sourcepath = Path.GetTempFileName();
             if (file.Length > 0)
             {
@@ -19,7 +19,6 @@ namespace Core.Utilities.Helpers
                     file.CopyTo(stream);
                 }
             }
-            var result = newPath(file);
             File.Move(sourcepath, result);
             return result;
         }
